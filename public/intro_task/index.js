@@ -57,6 +57,8 @@ function task(uid){
 
   // get or generate a subjectID
 
+  tpID = toString(1);
+  condID = toString(1);
 
   // get the prolific ID, // get task version - for counter-balancing
   // get
@@ -64,7 +66,24 @@ function task(uid){
     var subjectID = getQueryVariable('PROLIFIC_PID'); // check that this i a string or something...
   }
   else {
-      var subjectID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+      var subjectID_num = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+      var subjectID = subjectID_num.toString();
+  }
+
+  if (window.location.search.indexOf('STUDY_ID') > -1) {
+    var studyID = getQueryVariable('STUDY_ID'); // check that this i a string or something...
+  }
+  else {
+      var studyID_num = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+      var studyID = studyID_num.toString();
+  }
+
+  if (window.location.search.indexOf('SESSION_ID') > -1) {
+    var sessionID = getQueryVariable('SESSION_ID'); // check that this i a string or something...
+  }
+  else {
+      var sessionID_num = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+      var sessionID = sessionID_num.toString();
   }
 
   // get the database going
@@ -76,13 +95,21 @@ function task(uid){
   ///// change this record new date and start time
   db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).set({
       subjectID: subjectID,
-      uid: uid
+      uid: uid,
+      tpID: tpID,
+      condID:condID,
+      studyID: studyID,
+      sessionID: sessionID
   })
 
   // record new date and start time
   db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('introtask').doc('start').set({
       subjectID: subjectID,  // this refers to the subject's ID from prolific/
       uid:uid,
+      tpID: tpID,
+      condID:condID,
+      studyID: studyID,
+      sessionID: sessionID,
       date: new Date().toLocaleDateString(),
       start_time: new Date().toLocaleTimeString()
   })
@@ -108,7 +135,6 @@ timeline = timeline.concat(intro);
       is_html: true,
       stimulus: function(){
 
-
         var string = 'Press continue to begin the first task!';
 
         //db.collection('foragetask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('end').set({
@@ -120,7 +146,11 @@ timeline = timeline.concat(intro);
      on_finish: function(){
          // vary this based on task condition number...
          // change this to the location of the first task, ... include prolific ID and uid, and condition..
-       window.location = "https://app.prolific.co/submissions/complete?cc=1177C813"
+        var nextlink = "https://lockinstudy.firebaseapp.com/forage_task/?PROLIFIC_PID=" +
+         subjectID + "&STUDY_ID=" + studyID +  "&SESSION_ID=" + sessionID +
+          "&uid=" + uid + "&tpID=" + tpID  + "&condID=" + condID;
+
+       window.location = nextlink;
      }
   }
 timeline.push(end_screen)
@@ -128,12 +158,13 @@ timeline.push(end_screen)
   // recording data...
 
   // need a screen thanking them for the task and also figuring out the bonus... -- do this tonight
-
-console.log(timeline)
+var instruc_images = instruction_pagelinks_a;
+//console.log(timeline)
 
   /* start the experiment */
   jsPsych.init({
     timeline: timeline,
+    preload_images: instruc_images,
     show_preload_progress_bar: true,
     on_finish: function() {
       console.log('done')
