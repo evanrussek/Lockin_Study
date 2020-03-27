@@ -53,9 +53,8 @@ else {
     var sessionID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
 }
 
-
 if (window.location.search.indexOf('condID') > -1) {
-  var condID = getQueryVariable('uid'); // check that this i a string or something...
+  var condID = getQueryVariable('condID'); // check that this i a string or something...
 }
 else {
     var condID = 3; // if no prolific ID, generate random ID (for testing)
@@ -171,7 +170,7 @@ function task(uid){
             press_success_prob_harvest: .5,
             reward_noise: 2.5,
             start_reward_noise: 4,
-            time_min: 2.34,
+            time_min: .05,//2.34,
             travel_key_seq:this_travel_key_seq,
             travel_prompt: this_travel_prompt,
             harvest_key_seq: harvest_key_seq,
@@ -212,7 +211,7 @@ for (var i = 0;i < forage_trials.length;  i++){
     if (save_to_fb){
       //console.log(this_trial_data)
       console.log('saving this trial')
-      db.collection('foragetask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('trial_' + this.trial_num.toString()).set({
+      db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('foragetask').doc('trial_' + this.trial_num.toString()).set({
         trial_data: this_trial_data
       })
     }
@@ -252,9 +251,10 @@ trials = forage_trials;
 var timeline = [];
 timeline.push(full_screen);
 
-timeline = timeline.concat(intro_w_trials);
+//timeline = timeline.concat(intro_w_trials);
 
-for (i = 0; i < trials.length; i++){
+//for (i = 0; i < trials.length; i++){
+for (i = 0; i < 1; i++){
   var next_task_trial = trials[i];
 
   var info_trial = {
@@ -271,73 +271,38 @@ for (i = 0; i < trials.length; i++){
   timeline.push(summary_trial);
 }
 
-  // timeline = [];
-
-  var age_question = {
-    type: 'survey-text',
-    questions: [
-      {prompt: "How many years old are you?"}
-    ],
-    data:{trial_num: 'Q', Q_name: 'age'}
-  };
-  timeline.push(age_question);
-
-  var sex_question = {
-    type: 'evan-quiz',
-    questions: [
-      {prompt: "What is your sex?", options: ['male', 'female', 'other']}
-    ],
-    data:{trial_num: 'Q', Q_name: 'sex'}
-  };
-  timeline.push(sex_question);
-
-  var piano_question = {
-    type: 'evan-quiz',
-    questions: [
-      {prompt: "Do you either play piano or regularly engage in a similar sort of fine motor hand movement activity?", options: ['yes', 'no']}
-    ],
-    data:{trial_num: 'Q', Q_name: 'piano'}
-  };
-
-  timeline.push(piano_question);
-
-  var comment_question = {
-    type: 'survey-text',
-    questions: [
-      {prompt: "Do you have any comments on the task?"}
-    ],
-    data:{trial_num: 'Q', Q_name: 'comments'},
-    on_finish: function(){
-      var q_data = jsPsych.data.get().filter({trial_num: 'Q'}).json()
-      db.collection('foragetask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('Q_data').set({
-        trial_data: q_data
-      })
-    }
-  }
-  timeline.push(comment_question);
-
   // compute bonus for the main task...
   var end_screen = {
    type: 'html-button-response',
       timing_post_trial: 0,
-      choices: ['End Task'],
+      choices: ['Continue'],
       is_html: true,
       stimulus: function(){
 
         var random_total_points = jsPsych.randomization.sampleWithoutReplacement(total_points_arr, 1);
 
-        var string = 'You have finished the task. Thank you for your contribution to science! \
-                 On a randomly selected round, you recevieved ' + random_total_points + ' points. Your bonus will be based on this number. \
-              <b> PLEASE CLICK END TASK TO SUBMIT THE TASK TO PROLIFIC </b>.';
+        var string = 'You have finished the task.  \
+                 On a randomly selected round, you recevieved ' + random_total_points + ' points. The portion of your bonus from this task will be based on this number. \
+              <b> PLEASE CLICK CONTINUE TO MOVE ONTO THE NEXT TASK </b>.';
 
-        db.collection('foragetask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('end').set({
-          bonus_points: random_total_points,
-          end_time:  new Date().toLocaleTimeString()
-        })
+          db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('foragetask').doc('end').set({
+                bonus_points: random_total_points,
+                end_time:  new Date().toLocaleTimeString()
+              })
      return string;
     },
      on_finish: function(){
-       window.location = "https://app.prolific.co/submissions/complete?cc=1177C813"
+       if (parseInt(condID) == 1){ // if we're in first conditon, go to the
+         var nextlink = "https://lockinstudy.firebaseapp.com/grid_task/?PROLIFIC_PID=" +
+          subjectID + "&STUDY_ID=" + studyID +  "&SESSION_ID=" + sessionID +
+           "&uid=" + uid + "&tpID=" + tpID  + "&condID=" + condID;
+       }else{
+         var nextlink = "https://lockinstudy.firebaseapp.com/q_task/?PROLIFIC_PID=" +
+          subjectID + "&STUDY_ID=" + studyID +  "&SESSION_ID=" + sessionID +
+           "&uid=" + uid + "&tpID=" + tpID  + "&condID=" + condID;
+       }
+
+       window.location = nextlink;
      }
   }
   timeline.push(end_screen)

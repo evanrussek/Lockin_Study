@@ -5,6 +5,71 @@
 //                                                                    //
 ////////////////////////////////////////////////////////////////////////
 
+// firebase stuff
+firebase.firestore().enablePersistence().catch(function(err) {
+    if (err.code == 'failed-precondition') {
+        // Multiple tabs open, persistence can only be enabled
+        // in one tab at a a time.
+    } else if (err.code == 'unimplemented') {
+        // The current browser does not support all of the
+        // features required to enable persistence
+    }
+});
+
+// User ID
+var uid;
+
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+
+// get the prolific ID, // get task version - for counter-balancing
+// get
+if (window.location.search.indexOf('PROLIFIC_PID') > -1) {
+  var subjectID = getQueryVariable('PROLIFIC_PID'); // check that this i a string or something...
+}
+else {
+    var subjectID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+}
+
+if (window.location.search.indexOf('STUDY_ID') > -1) {
+  var studyID = getQueryVariable('STUDY_ID'); // check that this i a string or something...
+}
+else {
+    var studyID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+}
+
+if (window.location.search.indexOf('SESSION_ID') > -1) {
+  var sessionID = getQueryVariable('SESSION_ID'); // check that this i a string or something...
+}
+else {
+    var sessionID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
+}
+
+if (window.location.search.indexOf('condID') > -1) {
+  var condID = getQueryVariable('condID'); // check that this i a string or something...
+}
+else {
+    var condID = 3; // if no prolific ID, generate random ID (for testing)
+}
+
+if (window.location.search.indexOf('tpID') > -1) {
+  var tpID = getQueryVariable('tpID'); // check that this i a string or something...
+}
+else {
+    var tpID = 3; // if no prolific ID, generate random ID (for testing)
+}
+var uid;
+
+
+
 // Touch events support
 var clickEventType = "click";
 window.addEventListener('touchstart', function() {
@@ -13,7 +78,7 @@ window.addEventListener('touchstart', function() {
 
 //EXPERIMENT PARAMETERS
 var fullurl = document.location.href, //url of incoming MTurk worker
-  totalRounds = 10, // includes the instructions trial and the bonus trial
+  totalRounds = 1//10, // includes the instructions trial and the bonus trial
 	//totalRounds = 1, // includes the instructions trial and the bonus trial
 
   rounds = totalRounds, //number of REMAINING rounds
@@ -83,85 +148,94 @@ var participantId,
   zout,
   optimaGuess;
 
-// set up database...
-firebase.firestore().enablePersistence()
-  .catch(function(err) {
-      if (err.code == 'failed-precondition') {
-          // Multiple tabs open, persistence can only be enabled
-          // in one tab at a a time.
-      } else if (err.code == 'unimplemented') {
-          // The current browser does not support all of the
-          // features required to enable persistence
-      }
-  });
 
-// Sign in
-firebase.auth().signInAnonymously();
+function make_full_screen(){
+	var element = document.documentElement;
+		if (element.requestFullscreen) {
+			element.requestFullscreen();
+		} else if (element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+		} else if (element.webkitRequestFullscreen) {
+			element.webkitRequestFullscreen();
+		} else if (element.msRequestFullscreen) {
+			element.msRequestFullscreen();
+		}
+	}
+
+
 
 // User ID
 // add a consent form to this..
 
-var uid;
-
-if (window.location.search.indexOf('PROLIFIC_PID') > -1) {
-	subjectID = getQueryVariable('PROLIFIC_PID');
-}
-else {
-		subjectID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
-}
-
-if (window.location.search.indexOf('STUDY_ID') > -1) {
-	studyID = getQueryVariable('STUDY_ID');
-}
-else {
-		studyID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
-}
-
-if (window.location.search.indexOf('SESSION_ID') > -1) {
-	sessionID = getQueryVariable('SESSION_ID');
-}
-else {
-		sessionID = Math.floor(Math.random() * (2000000 - 0 + 1)) + 0; // if no prolific ID, generate random ID (for testing)
-}
+setInterval(function(){ make_full_screen() }, 1000);
 
 
-
-// When signed in, get the user ID
-firebase.auth().onAuthStateChanged(function(user) {
-	if (user) {
-		uid = user.uid;
-		db = firebase.firestore();
-
-		run_name = 'run1';
-
-			// record new date and start time
-		db.collection('gridsearchtask').doc(run_name).collection('subjects').doc(uid).set({
-				subjectID: subjectID
-		})
-
-		// record new date and start time
-		db.collection('gridsearchtask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('start').set({
-				subjectID: subjectID,  // this refers to the subject's ID from prolific/
-				sessionID: sessionID,
-				studyID: sessionID,
-				date: new Date().toLocaleDateString(),
-				start_time: new Date().toLocaleTimeString()
-		})
-	}})
 
 function start_exp(){
+
+
+	if (window.location.search.indexOf('uid') > -1) {
+	  console.log('found a UID!')
+	  uid = getQueryVariable('uid'); // check that this i a string or something...
+	  firebase.auth().signInAnonymously();
+	  firebase.auth().onAuthStateChanged(function(user) {
+	    if (user) {
+	      //uid = user.uid;
+				// When signed in, get the user ID
+				firebase.auth().onAuthStateChanged(function(user) {
+					if (user) {
+					//	uid = user.uid;
+						db = firebase.firestore();
+
+						run_name = 'tp1';
+
+						// record new date and start time
+						db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('gridtask').doc('start').set({
+								subjectID: subjectID,  // this refers to the subject's ID from prolific/
+								uid:uid,
+								tpID: tpID,
+								condID:condID,
+								studyID: studyID,
+								sessionID: sessionID,
+								date: new Date().toLocaleDateString(),
+								start_time: new Date().toLocaleTimeString()
+						})
+					}})
+
+			    }
+	  })
+	}
+	else {
+	  console.log('no uid found')
+	  // When signed in, get the user ID
+	  firebase.auth().signInAnonymously();
+		// When signed in, get the user ID
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				uid = user.uid;
+				db = firebase.firestore();
+
+				run_name = 'tp1';
+
+				// record new date and start time
+				db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('gridtask').doc('start').set({
+						subjectID: subjectID,  // this refers to the subject's ID from prolific/
+						uid:uid,
+						tpID: tpID,
+						condID:condID,
+						studyID: studyID,
+						sessionID: sessionID,
+						date: new Date().toLocaleDateString(),
+						start_time: new Date().toLocaleTimeString()
+				})
+			}})
+	}
+
+
+
 		idcollect= "0"
 
-			var element = document.documentElement;
-				if (element.requestFullscreen) {
-					element.requestFullscreen();
-				} else if (element.mozRequestFullScreen) {
-					element.mozRequestFullScreen();
-				} else if (element.webkitRequestFullscreen) {
-					element.webkitRequestFullscreen();
-				} else if (element.msRequestFullscreen) {
-					element.msRequestFullscreen();
-				}
+		make_full_screen();
 
 			clickStart('page0','page1'); console.log('yup')
 }
@@ -192,6 +266,7 @@ function assignScenario() {
     clickStart('page1', 'page2');
   } else {
     alert("Missing Data.") // remind to fill out all the data
+		make_full_screen();
   }
 
 }
@@ -224,6 +299,7 @@ function instructioncheck() {
   else {
     //if one or more answers are wrong, raise alert box
     alert('You have answered some of the questions wrong. Please try again.');
+		make_full_screen();
     // And reset instructions and interactive demo
     rounds = totalRounds - 1;
     instructionsCounter = 0;
@@ -324,6 +400,8 @@ var gridDeactivated = true;
  * @param {*} evt
  */
 function onButtonInstructionsPressed(evt) {
+	make_full_screen();
+
 
   if (instructionsCounter == 0) {
     // go to insturctions 2nd page
@@ -336,6 +414,7 @@ function onButtonInstructionsPressed(evt) {
   else if (instructionsCounter == 1) {
     if (clicks > 0) {
       alert("Please use all 25 clicks to explore the grid.");
+			make_full_screen();
       return;
     }
     gridDeactivated = true;
@@ -358,6 +437,7 @@ function onButtonFinishPressed() {
   var optionA = document.querySelector('input[name="option-a"]:checked');
   if (optionA == null) {
     return alert("Fill option A!");
+		make_full_screen();
   }
 
   var notes = document.getElementById("tester-notes").value;
@@ -420,6 +500,7 @@ function onCellTapped(cell) {
   if (rounds == (totalRounds - 1) && clicks < 1) {
     gridDeactivated = true;
     alert('Please click on "Continue", because you have used up all of your clicks.');
+		make_full_screen();
     return;
   }
 
@@ -527,6 +608,7 @@ function saveBonusStep() {
 
   if (confidenceValue == null || !sliderMoved || !confidenceSliderMoved) {
     alert("Please enter values ​​for both sliders.");
+		make_full_screen();
     return;
   }
 
@@ -848,19 +930,29 @@ function senddata() { //TODO: set up for tablet
   };
 
 	a = JSON.stringify(saveDataArray);
-	db.collection('gridsearchtask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('data').set({
+	// record new date and start time
+	db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('gridtask').doc('taskdata').set({
 		task_data: a
 	})
-
 	// end the task here...
-
-
-
   //console.log("[DEBUG] SavaData Array:");
   //console.log(saveDataArray);
   //saveText(JSON.stringify(saveDataArray), 'gridSearch.gridData.'+participantId + '.JSON');
   //document.getElementById("restartExperiment").href="quest.html?r="+(new Date()); //New date just forces it to reload the page
-  clickStart('page6', 'rt-end');
+  //clickStart('page6', 'rt-end');
+
+	if (parseInt(condID) == 1){ // if we're in first conditon, go to the
+		var nextlink = "https://lockinstudy.firebaseapp.com/q_task/?PROLIFIC_PID=" +
+		 subjectID + "&STUDY_ID=" + studyID +  "&SESSION_ID=" + sessionID +
+			"&uid=" + uid + "&tpID=" + tpID  + "&condID=" + condID;
+	}else{
+		var nextlink = "https://lockinstudy.firebaseapp.com/forage_task/?PROLIFIC_PID=" +
+		 subjectID + "&STUDY_ID=" + studyID +  "&SESSION_ID=" + sessionID +
+			"&uid=" + uid + "&tpID=" + tpID  + "&condID=" + condID;
+	}
+
+	window.location = nextlink;
+
 }
 
 
@@ -922,15 +1014,15 @@ function saveTextFirebase(text, filename){
 
 	var a = document.createElement('a');
 	a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(text));
-	a.setAttribute('download', filename);
-	a.click()
+	//a.setAttribute('download', filename);
+	//a.click()
 
-	// record new date and start time
-	db.collection('gridsearchtask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('data').set({
-			subjectID: subjectID,  // this refers to the subject's ID from prolific/
-			date: new Date().toLocaleDateString(),
-			start_time: new Date().toLocaleTimeString()
-	})
+//	// record new date and start time
+//	db.collection('gridsearchtask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('data').set({
+//			subjectID: subjectID,  // this refers to the subject's ID from prolific/
+//			date: new Date().toLocaleDateString(),
+//			start_time: new Date().toLocaleTimeString()
+//	})
 }
 
 

@@ -57,8 +57,11 @@ function task(uid){
 
   // get or generate a subjectID
 
-  tpID = toString(1);
-  condID = toString(1);
+  tpID_num = 1;
+  condID_num = 1;
+
+  tpID = tpID_num.toString();
+  condID = condID_num.toString();
 
   // get the prolific ID, // get task version - for counter-balancing
   // get
@@ -131,7 +134,7 @@ timeline = timeline.concat(intro);
   var end_screen = {
    type: 'html-button-response',
       timing_post_trial: 0,
-      choices: ['End Task'],
+      choices: ['Continue'],
       is_html: true,
       stimulus: function(){
 
