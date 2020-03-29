@@ -24,11 +24,21 @@ jsPsych.plugins["evan-display-text"] = (function() {
     wait_for_press: {
       type: jsPsych.plugins.parameterType.BOOL,
       default: true
+    },
+    key_image:{
+      type: jsPsych.plugins.parameterType.IMAGE,
+      default: ''
+    },
+    stars:{
+      type: jsPsych.plugins.parameterType.INT,
+      default: 0
     }
   }
 }
 
   plugin.trial = function(display_element, trial) {
+
+    var star_img = "Stimuli/star.png";
 
     // define the response that we'll append
     var response = {
@@ -60,10 +70,21 @@ jsPsych.plugins["evan-display-text"] = (function() {
           .attr("x", 0).attr("y", 0).attr("width", par.w)
           .attr("height", par.h).style("fill", par.svg_color).style("opacity",.7);
 
-    place_text(trial.line_1, 'text', par.w/2, par.h/2 - par.text_font_size, par.text_font_size/2, 1, "White");
-    place_text(trial.line_2, 'text', par.w/2, par.h/2, par.text_font_size/2, 1, "White");
-    place_text(trial.line_3, 'text', par.w/2, par.h/2 + par.text_font_size, par.text_font_size/2, 1, "White");
+    place_text(trial.line_1, 'text', par.w/2, par.h/2 - 4*par.text_font_size, par.text_font_size/2, 1, "White");
+    place_text(trial.line_2, 'text', par.w/2, par.h/2 - 3*par.text_font_size, par.text_font_size/2, 1, "White");
+    place_text(trial.line_3, 'text', par.w/2, par.h/2 - 2*par.text_font_size, par.text_font_size/2, 1, "White");
 
+    place_img(trial.key_image, "keys", par.w/2 - 3*par.w/20,par.h/2 - par.text_font_size,
+              3*par.w/10, 3*par.h/10, 1);
+
+    //trial.stars = 5;
+    if (trial.stars > 0){
+      for (i = 0; i<trial.stars; i++){
+        place_img(star_img, "star", par.w/2 - 14*par.w/80 + i*3*par.w/40,par.h/2 - par.text_font_size,
+                  3*par.w/40, 3*par.h/10, 1);
+      }
+
+    }
     ///////////////////////////////////////
 
 

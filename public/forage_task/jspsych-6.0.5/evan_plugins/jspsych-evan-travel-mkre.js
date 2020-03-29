@@ -78,6 +78,8 @@ jsPsych.plugins["travel-mkre"] = (function() {
 
     par = define_parameters('trial');
 
+    var timer_started = false;
+
 
     // start up travel key sequence and our place in it
     var travel_key_seq = trial.travel_key_seq;
@@ -470,6 +472,11 @@ jsPsych.plugins["travel-mkre"] = (function() {
 
         // end case for where they pressed the wrong key
         else{ // if they got the right key
+
+          if (!timer_started){
+            wait_for_time(total_msec, end_trial);
+            timer_started = true;
+          }
       //    console.log('correct key')
           // update the sequence ...
           // update current key
@@ -882,9 +889,9 @@ jsPsych.plugins["travel-mkre"] = (function() {
         jsPsych.finishTrial(trial_data);
       } // end end_trial
 
-      // start the time..
+      // start the time.. on first successful travel press
       total_msec = 60*1000*trial.time_min;
-      wait_for_time(total_msec, end_trial);
+      //wait_for_time(total_msec, end_trial);
       travel_phase();
   };
   // count the round number

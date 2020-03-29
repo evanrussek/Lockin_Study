@@ -78,7 +78,7 @@ window.addEventListener('touchstart', function() {
 
 //EXPERIMENT PARAMETERS
 var fullurl = document.location.href, //url of incoming MTurk worker
-  totalRounds = 1//10, // includes the instructions trial and the bonus trial
+  totalRounds = 10//10, // includes the instructions trial and the bonus trial
 	//totalRounds = 1, // includes the instructions trial and the bonus trial
 
   rounds = totalRounds, //number of REMAINING rounds
@@ -950,9 +950,7 @@ function senddata() { //TODO: set up for tablet
 		 subjectID + "&STUDY_ID=" + studyID +  "&SESSION_ID=" + sessionID +
 			"&uid=" + uid + "&tpID=" + tpID  + "&condID=" + condID;
 	}
-
 	window.location = nextlink;
-
 }
 
 

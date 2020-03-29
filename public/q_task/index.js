@@ -120,76 +120,56 @@ function task(uid){
 var timeline = [];
 timeline.push(full_screen);
 
-// make an instruction page.... // and also a you've finished the task page...
-timeline = timeline.concat(intro_w_trials);
+// make an instruction page.... // and also a you've finished the task page whcih send them back to prolific
+timeline = timeline.concat(instruction_pages_a);
 
-  // timeline = [];
+// do you also want teps? //go through all of these and find out how long they take...
 
-  var age_question = {
-    type: 'survey-text',
-    questions: [
-      {prompt: "How many years old are you?"}
-    ],
-    data:{trial_num: 'Q', Q_name: 'age'}
-  };
-  timeline.push(age_question);
+timeline.push(age_question);
+timeline.push(sex_question);
+timeline.push(piano_question);
+timeline.push(neo_questionairre)
+timeline.push(idas_questionairre)
+timeline.push(pss_questionairre)
+timeline.push(apathy_questionairre)
+timeline.push(teps_questionairre) // this is short...
+timeline.push(cov_ac1_questionairre)
+timeline.push(cov_ac2_questionairre)
+timeline.push(act_general_question) //
+timeline.push(cov_stress1_questionairre)
+timeline.push(covid_general_stress_question)
+timeline.push(cov_soc1_questionairre)
+timeline.push(cov_soc2_questionairre)
+timeline.push(social_general_soc_question)
 
-  var sex_question = {
-    type: 'evan-quiz',
-    questions: [
-      {prompt: "What is your sex?", options: ['male', 'female', 'other']}
-    ],
-    data:{trial_num: 'Q', Q_name: 'sex'}
-  };
-  timeline.push(sex_question);
 
-  var piano_question = {
-    type: 'evan-quiz',
-    questions: [
-      {prompt: "Do you either play piano or regularly engage in a similar sort of fine motor hand movement activity?", options: ['yes', 'no']}
-    ],
-    data:{trial_num: 'Q', Q_name: 'piano'}
-  };
 
-  timeline.push(piano_question);
-
-  var comment_question = {
-    type: 'survey-text',
-    questions: [
-      {prompt: "Do you have any comments on the task?"}
-    ],
-    data:{trial_num: 'Q', Q_name: 'comments'},
-    on_finish: function(){
-      var q_data = jsPsych.data.get().filter({trial_num: 'Q'}).json()
-      db.collection('foragetask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('Q_data').set({
-        trial_data: q_data
-      })
-    }
-  }
-  timeline.push(comment_question);
 
   // compute bonus for the main task...
   var end_screen = {
-   type: 'html-button-response',
+      type: 'html-button-response',
       timing_post_trial: 0,
       choices: ['End Task'],
       is_html: true,
       stimulus: function(){
 
-        var random_total_points = jsPsych.randomization.sampleWithoutReplacement(total_points_arr, 1);
+        var string = 'You have finished this task. Thank you for your contribution to science! \
+               As a reminder, you will be contacted in two weeks to complete the second part of the study. \
+                You will paid upon completion of the second part of the study, two weeks from now. \
+                All bonus payment you have thus far accumulated will carry forward to the payment on that date \
+              <b> PLEASE CLICK END TASK TO SUBMIT THIS TASK TO PROLIFIC </b>.';
 
-        var string = 'You have finished the task. Thank you for your contribution to science! \
-                 On a randomly selected round, you recevieved ' + random_total_points + ' points. Your bonus will be based on this number. \
-              <b> PLEASE CLICK END TASK TO SUBMIT THE TASK TO PROLIFIC </b>.';
 
-        db.collection('foragetask').doc(run_name).collection('subjects').doc(uid).collection('taskdata').doc('end').set({
-          bonus_points: random_total_points,
-          end_time:  new Date().toLocaleTimeString()
-        })
+            var q_data = jsPsych.data.get().json();//jsPsych.data.get().filter({trial_num: 'Q'}).json()
+              db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('qtask').doc('qdata').set({
+                q_data: q_data,
+                end_time:  new Date().toLocaleTimeString()
+              })
      return string;
     },
      on_finish: function(){
-       window.location = "https://app.prolific.co/submissions/complete?cc=1177C813"
+       // get the window location correct.
+       window.location = "https://app.prolific.co/submissions/complete?cc=497ACFD8";
      }
   }
   timeline.push(end_screen)

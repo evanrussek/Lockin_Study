@@ -69,24 +69,26 @@ jsPsych.plugins["evan-select-env"] = (function() {
     // left rectangles
 
     d3.select("svg").append("rect").attr("class", "HIGH")
-          .attr("x", par.w/2 - par.w/5).attr("y", par.h/4).attr("width", par.w/6)
+          .attr("x", par.w/2 - par.w/5).attr("y", par.h/3).attr("width", par.w/6)
           .attr("height", rect_height).style("fill", 'blue').style("opacity",.025);
 
-   place_text("HIGH", "HIGH", par.w/3 + par.w/21, par.h/4 + rect_height/2 + 12, 35, .25, "white")
+  // change the height of high and low...
+
+   place_text("HIGH", "HIGH", par.w/3 + par.w/21, par.h/3 + rect_height/2 + 12, 35, .25, "white")
 
     // show a rectangle
-    d3.select("svg").append("rect").attr("class", "MEDIUM")
-          .attr("x", par.w/2 - par.w/5).attr("y", par.h/4 + par.h/6).attr("width", par.w/6)
-          .attr("height", rect_height).style("fill", 'blue').style("opacity",.025);
+  //  d3.select("svg").append("rect").attr("class", "MEDIUM")
+  //        .attr("x", par.w/2 - par.w/5).attr("y", par.h/4 + par.h/6).attr("width", par.w/6)
+  //        .attr("height", rect_height).style("fill", 'blue').style("opacity",.025);
 
-    place_text("MEDIUM", "MEDIUM", par.w/3 + par.w/21, par.h/4 + par.h/6 + rect_height/2 + 12, 35, .25, "white")
+    //place_text("MEDIUM", "MEDIUM", par.w/3 + par.w/21, par.h/4 + par.h/6 + rect_height/2 + 12, 35, .25, "white")
 
     // show a rectangle
     d3.select("svg").append("rect").attr("class", "LOW")
-          .attr("x", par.w/2 - par.w/5).attr("y", par.h/4 + 2*par.h/6 ).attr("width", par.w/6)
+          .attr("x", par.w/2 - par.w/5).attr("y", par.h/3 + par.h/6 ).attr("width", par.w/6)
           .attr("height", rect_height).style("fill", 'blue').style("opacity",.025);
 
-    place_text("LOW", "LOW", par.w/3 + par.w/21, par.h/4 + 2*par.h/6 + rect_height/2 + 12, 35, .25, "white")
+    place_text("LOW", "LOW", par.w/3 + par.w/21, par.h/3 + par.h/6 + rect_height/2 + 12, 35, .25, "white")
 
     // right rectangles
     d3.select("svg").append("rect").attr("class", "EASY")

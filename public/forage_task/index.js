@@ -114,15 +114,16 @@ function task(uid){
       start_time: new Date().toLocaleTimeString()
   })
 
-
   var full_screen = {
     type: 'fullscreen',
     fullscreen_mode: true
   };
 
+    var key_easy_im = "Stimuli/keys_Easy.png";
+    var key_hard_im = "Stimuli/keys_Hard.png";
     // we'll vary the travel amount
-    var reward_amounts = [60, 90, 120];
-    var reward_names = ['LOW', 'MEDIUM', 'HIGH'];
+    var reward_amounts = [53, 105];
+    var reward_names = ['LOW', 'HIGH'];
     var travel_names = ['EASY', 'HARD'];
     var harvest_key_seq = ['u'];
     var harvest_prompt = ['u'];
@@ -137,7 +138,7 @@ function task(uid){
     var travel_prompt_easy = ["Repeatedly press 'f' (left index) while holding down '0', '9', 'm' (right) to travel"];
     var harvest_prompt_easy=  ["Repeatedly press 'u' to harvest or 'f' to travel"];
 
-    var n_rounds = 1;
+    var n_rounds = 2;
 
     var total_points_arr = [];
 
@@ -153,24 +154,26 @@ function task(uid){
               var this_travel_prompt = travel_prompt_easy;
               var this_travel_held_down_keys = travel_hold_down_keys_easy;
               var this_harvest_prompt = harvest_prompt_easy;
+              var key_im = key_easy_im;
           }else{ // 1 is hard...
             var this_travel_key_seq = travel_key_seq_hard;
             var this_travel_prompt = travel_prompt_hard;
             var this_travel_held_down_keys = travel_hold_down_keys_hard;
             var this_travel_prompt = travel_prompt_hard;
             var this_harvest_prompt = harvest_prompt_hard;
+            var key_im = key_hard_im;
           }
           trial_num = trial_num + 1;
           var this_trial = {
             type: 'travel-mkre',
             start_reward: reward_amounts[rew_idx],
-            decay: .98,
-            n_travel_steps: 16,
+            decay: .965, // decay a good deal faster
+            n_travel_steps: 12, // reduced this by X number of presses...
             press_success_prob_travel: .8,
-            press_success_prob_harvest: .5,
+            press_success_prob_harvest: .5, // this slows down the harvest...
             reward_noise: 2.5,
             start_reward_noise: 4,
-            time_min: .05,//2.34,
+            time_min: 1.8,//1.75,//2.34, // will change this...
             travel_key_seq:this_travel_key_seq,
             travel_prompt: this_travel_prompt,
             harvest_key_seq: harvest_key_seq,
@@ -179,7 +182,8 @@ function task(uid){
             rew_idx: r_idx,
             d_idx: d_idx,
             reward_name: reward_names[rew_idx],
-            travel_name: travel_names[d_idx]
+            travel_name: travel_names[d_idx],
+            key_im: key_im
           }
           this_round_trials.push(this_trial)
         }
@@ -190,13 +194,10 @@ function task(uid){
 
 
 
-// add a trial num
+// add a trial num // this is correct.....
 for (var i = 0;i < forage_trials.length;  i++){
   forage_trials[i].trial_num = i + 1;
 }
-
-var task_name = 'foragetask';
-
 
 //db.collection("tasks").doc('meg_generalisation_8').collection('subjects').doc(uid).collection('trial_data').doc('trial_' + trial_data.trial_number.toString()).set({trial_data});
 
@@ -220,12 +221,13 @@ for (var i = 0;i < forage_trials.length;  i++){
 
 
 
-var make_start_trial = function(travel_prompt, harvest_prompt, rew_text, trial_num){
+var make_start_trial = function(travel_prompt, harvest_prompt, rew_text, trial_num, key_image){
     var text_trial = {
       type: 'evan-display-text',
       line_1: "Traveling to the new environment",
       line_2: "Trees in this environment will all start with a " + rew_text + " number of points.",
       line_3: travel_prompt + ". Press 'u' to harvest",
+      key_image: key_image
     }
   return text_trial
 }
@@ -238,10 +240,22 @@ var make_summary_trial = function(travel_prompt, harvest_prompt, trial_num){
       var total_points = lasttimelinedata.values().pop().total_points
       total_points_arr.push(total_points);
       console.log(lasttimelinedata)
-      return "You collected " + total_points + " points.";
+      var max_stars = 5;
+      var nstars = Math.round(total_points*(max_stars / (18000)));
+      if (nstars > 5){nstars = 5};
+      if (nstars < 1){nstars = 1};
+      return "You collected " + total_points + " points and received " + nstars + " stars";
     },
     line_2: "Great work.",
-    line_3: "You've completed " + (trial_num)+ " out of 6 rounds.",
+    line_3: "You've completed " + (trial_num)+ " out of 8 rounds.",
+    stars: function(){
+      var npoints = total_points_arr[total_points_arr.length - 1];
+      var max_stars = 5;
+      var nstars = Math.round(npoints*(max_stars / (18000)));
+      if (nstars > 5){nstars = 5};
+      if (nstars < 1){nstars = 1};
+      return nstars
+    }
   }
   return text_trial
 }
@@ -251,10 +265,10 @@ trials = forage_trials;
 var timeline = [];
 timeline.push(full_screen);
 
-//timeline = timeline.concat(intro_w_trials);
+timeline = timeline.concat(intro_w_trials);
 
-//for (i = 0; i < trials.length; i++){
-for (i = 0; i < 1; i++){
+for (i = 0; i < trials.length; i++){
+//for (i = 0; i < 1; i++){
   var next_task_trial = trials[i];
 
   var info_trial = {
@@ -263,7 +277,7 @@ for (i = 0; i < 1; i++){
     travel_cond: next_task_trial.travel_name
   }
 
-  var next_trial_text = make_start_trial(next_task_trial.travel_prompt, next_task_trial.harvest_prompt,next_task_trial.reward_name, i + 1);
+  var next_trial_text = make_start_trial(next_task_trial.travel_prompt, next_task_trial.harvest_prompt,next_task_trial.reward_name, i + 1, next_task_trial.key_im);
   var summary_trial = make_summary_trial(next_task_trial.travel_prompt, next_task_trial.harvest_prompt, i + 1);
   timeline.push(info_trial);
   timeline.push(next_trial_text);
@@ -313,6 +327,9 @@ for (i = 0; i < 1; i++){
   var instruc_images = instruction_pagelinks_a.concat(instruction_pagelinks_b);
   instruc_images = instruc_images.concat(instruction_pagelinks_c);
   instruc_images.push("Stimuli/warrior.svg");
+  instruc_images.push(key_easy_im);
+  instruc_images.push(key_hard_im);
+
 
 console.log(timeline)
 

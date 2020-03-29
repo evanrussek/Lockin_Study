@@ -1,21 +1,21 @@
 // for two-stim choice add parameter for whether to limit choice time.
-var instruction_pagelinks_a = ['Stimuli/forage_instructions/Slide1.JPG',
-                            'Stimuli/forage_instructions/Slide2.JPG',
-                            'Stimuli/forage_instructions/Slide3.JPG',
-                            'Stimuli/forage_instructions/Slide4.JPG',
-                            'Stimuli/forage_instructions/Slide5.JPG',
-                            'Stimuli/forage_instructions/Slide6.JPG'];
+var instruction_pagelinks_a = ['Stimuli/forage_instructions/Slide1.jpg',
+                            'Stimuli/forage_instructions/Slide2.jpg',
+                            'Stimuli/forage_instructions/Slide3.jpg',
+                            'Stimuli/forage_instructions/Slide4.jpg',
+                            'Stimuli/forage_instructions/Slide5.jpg',
+                            'Stimuli/forage_instructions/Slide6.jpg'];
 
-var instruction_pagelinks_b = ['Stimuli/forage_instructions/Slide7.JPG'];
+var instruction_pagelinks_b = ['Stimuli/forage_instructions/Slide7.jpg'];
 
-var instruction_pagelinks_c = ['Stimuli/forage_instructions/Slide8.JPG',
-															'Stimuli/forage_instructions/Slide9.JPG']
+var instruction_pagelinks_c = ['Stimuli/forage_instructions/Slide8.jpg',
+															'Stimuli/forage_instructions/Slide9.jpg']
 
 var practice_trial2 = {
   type: 'travel-mkre',
   start_reward: 75,
-  decay: .98,
-  n_travel_steps: 16,
+  decay: .96,
+  n_travel_steps: 12,
   press_success_prob_travel: .8,
   press_success_prob_harvest: .5,
   reward_noise: 2.5,
@@ -32,9 +32,9 @@ var practice_trial2 = {
 var practice_trial1 = { // this is the easy condition...
   type: 'travel-mkre',
   start_reward: 75,
-  decay: .98,
-  n_travel_steps: 16,
-  press_success_prob_travel: .75,
+  decay: .96,
+  n_travel_steps: 12,
+  press_success_prob_travel: .8,
   press_success_prob_harvest: .5,
   reward_noise: 2.5,
   start_reward_noise: 4,
@@ -84,15 +84,15 @@ var instruction_pages_c = {
 var questions = ["How long will each round last?", // 1
 				"What determines your bonus?", // 2
 				"How do you travel to a tree?", // 3
-				"Is the TRAVEL sequence the same in every round?", // 4
+				"Is the TRAVEL key the same in every round?", // 4
 				"When you are at a tree, how do you collect points?", // 5
 				"What happens to the number of points a tree provides over time?", // 6
 				"When you are at a tree, how do you leave the tree?", // 7
 				"What factors makes the different environments different?",
-				"How many points do trees start with in MEDIUM tree richness environments?"]; // 8
+				"How many points do trees start with in HIGH tree richness environments?"]; // 8
 
-var options1 =  ['1 minute', '1.5 minutes', '2 minutes', '2.5 minutes', '3 minutes'];
-var correct1 = 3;
+var options1 =  ['1.25 minutes', '1.75 minutes', '2.25 minutes', '2.75 minutes', '3.25 minutes'];
+var correct1 = 1;
 
 var options2 = ['Total number of points collected over the entire experiment',
 				'Total number of points collected on a randomly selected round',
@@ -129,9 +129,8 @@ var options8 = ['Number of button presses required to travel to a new tree.',
 				'Difficulty of traveling and Tree point richness for number of the points it starts at.'];
 var correct8 = 2;
 
-var options9 = [60,
-								90,
-								120];
+var options9 = [50,
+								100];
 var correct9 = 1;
 
 
@@ -249,7 +248,7 @@ var finish_instruc_screen = {
 	//    button_html: '<button class="jspsych-btn" style="display:none">%choice%</button>',
 	choices: ['Begin the task!'],
 	is_html: true,
-	stimulus: 'You passed the quiz! Great work. The task will take about 17 minutes. Press the button to begin.'
+	stimulus: 'You passed the quiz! Great work. This task will take about 18 minutes. Press the button to begin.'
 }
 
 intro_w_trials.push(finish_instruc_screen);
