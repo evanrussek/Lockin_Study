@@ -15,8 +15,8 @@ var practice_trial2 = {
   type: 'travel-mkre',
   start_reward: 75,
   decay: .96,
-  n_travel_steps: 12,
-  press_success_prob_travel: .8,
+  n_travel_steps: 13,
+  press_success_prob_travel: .75,
   press_success_prob_harvest: .5,
   reward_noise: 2.5,
   start_reward_noise: 4,
@@ -91,11 +91,11 @@ var questions = ["How long will each round last?", // 1
 				"What factors makes the different environments different?",
 				"How many points do trees start with in HIGH tree richness environments?"]; // 8
 
-var options1 =  ['1.25 minutes', '1.75 minutes', '2.25 minutes', '2.75 minutes', '3.25 minutes'];
+var options1 =  ['1 minutes 15 seconds', '1 minute 45 seconds', '2 minutes', '2 minutes 30 seconds', '3 minutes'];
 var correct1 = 1;
 
-var options2 = ['Total number of points collected over the entire experiment',
-				'Total number of points collected on a randomly selected round',
+var options2 = ['Total number of stars collected over the entire experiment',
+				'Number of stars collected on a randomly selected round',
 				'Highest single point value received on a randomly selected round'];
 var correct2 = 1;
 
@@ -132,7 +132,6 @@ var correct8 = 2;
 var options9 = [50,
 								100];
 var correct9 = 1;
-
 
 // build the quiz...
 var corr_string = '{"Q0":' + '"'+options1[correct1]+'",' + '"Q1":' + '"'+options2[correct2]+'",'

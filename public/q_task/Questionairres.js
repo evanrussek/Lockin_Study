@@ -476,7 +476,7 @@ var covid_general_stress_question = {
 ///////////////////////////////////////////////////////
 //////////////// COVID - social //////////////////////
 //////////////////////////////////////////////////////
-var cov_soc1_preamble = 'In a typical week (7 day period), before being affected by COVID, how many days would you:';
+var cov_soc1_preamble = 'In a typical week (7 day period),<strong> before being affected by / aware of  COVID </strong> , how many days would you:';
 
 var cov_soc1_Qs = ['Not leaving the house',
 'Go outside for 15 minutes or more',

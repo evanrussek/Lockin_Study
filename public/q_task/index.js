@@ -154,7 +154,7 @@ timeline.push(social_general_soc_question)
       stimulus: function(){
 
         var string = 'You have finished this task. Thank you for your contribution to science! \
-               As a reminder, you will be contacted in two weeks to complete the second part of the study. \
+               As a reminder, you will be contacted in two weeks (Friday, April 10, evening) to complete the second part of the study. You will have 48 hours to complete this. \
                 You will paid upon completion of the second part of the study, two weeks from now. \
                 All bonus payment you have thus far accumulated will carry forward to the payment on that date \
               <b> PLEASE CLICK END TASK TO SUBMIT THIS TASK TO PROLIFIC </b>.';
@@ -169,7 +169,7 @@ timeline.push(social_general_soc_question)
     },
      on_finish: function(){
        // get the window location correct.
-       window.location = "https://app.prolific.co/submissions/complete?cc=497ACFD8";
+       window.location =  "https://app.prolific.co/submissions/complete?cc=13FD8036";
      }
   }
   timeline.push(end_screen)

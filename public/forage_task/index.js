@@ -94,7 +94,8 @@ function task(uid){
 
   // get or generate a subjectID
 
-
+  var max_stars = 10;
+  var max_points = 20000;
   // get the database going
   // create a reference to the database
   var db = firebase.firestore();
@@ -167,13 +168,13 @@ function task(uid){
           var this_trial = {
             type: 'travel-mkre',
             start_reward: reward_amounts[rew_idx],
-            decay: .965, // decay a good deal faster
-            n_travel_steps: 12, // reduced this by X number of presses...
-            press_success_prob_travel: .8,
+            decay: .96, // decay a good deal faster
+            n_travel_steps: 13, // reduced this by X number of presses...
+            press_success_prob_travel: .75,
             press_success_prob_harvest: .5, // this slows down the harvest...
             reward_noise: 2.5,
             start_reward_noise: 4,
-            time_min: 1.8,//1.75,//2.34, // will change this...
+            time_min: 1.75,//1.75,//2.34, // will change this...
             travel_key_seq:this_travel_key_seq,
             travel_prompt: this_travel_prompt,
             harvest_key_seq: harvest_key_seq,
@@ -240,20 +241,21 @@ var make_summary_trial = function(travel_prompt, harvest_prompt, trial_num){
       var total_points = lasttimelinedata.values().pop().total_points
       total_points_arr.push(total_points);
       console.log(lasttimelinedata)
-      var max_stars = 5;
-      var nstars = Math.round(total_points*(max_stars / (18000)));
-      if (nstars > 5){nstars = 5};
-      if (nstars < 1){nstars = 1};
+      //var max_stars = 10;
+      //var Math.round(number * 10) / 10
+      var nstars = Math.round(total_points*(max_stars / max_points));
+      if (nstars > 10){nstars = 10};
+      if (nstars < 2){nstars = 2};
       return "You collected " + total_points + " points and received " + nstars + " stars";
     },
     line_2: "Great work.",
     line_3: "You've completed " + (trial_num)+ " out of 8 rounds.",
     stars: function(){
       var npoints = total_points_arr[total_points_arr.length - 1];
-      var max_stars = 5;
-      var nstars = Math.round(npoints*(max_stars / (18000)));
-      if (nstars > 5){nstars = 5};
-      if (nstars < 1){nstars = 1};
+      //var max_stars = 10;
+      var nstars = Math.round(npoints*(max_stars / (max_points)));
+      if (nstars > 10){nstars = 10};
+      if (nstars < 2){nstars = 2};
       return nstars
     }
   }
@@ -294,9 +296,10 @@ for (i = 0; i < trials.length; i++){
       stimulus: function(){
 
         var random_total_points = jsPsych.randomization.sampleWithoutReplacement(total_points_arr, 1);
+        var nstars = Math.round(random_total_points*(max_stars / (max_points)));
 
         var string = 'You have finished the task.  \
-                 On a randomly selected round, you recevieved ' + random_total_points + ' points. The portion of your bonus from this task will be based on this number. \
+                 Great work! Your bonus for this task will be based on a randomly selected round. \
               <b> PLEASE CLICK CONTINUE TO MOVE ONTO THE NEXT TASK </b>.';
 
           db.collection('lockintask').doc(run_name).collection('subjects').doc(uid).collection('foragetask').doc('end').set({

@@ -80,7 +80,7 @@ jsPsych.plugins["evan-display-text"] = (function() {
     //trial.stars = 5;
     if (trial.stars > 0){
       for (i = 0; i<trial.stars; i++){
-        place_img(star_img, "star", par.w/2 - 14*par.w/80 + i*3*par.w/40,par.h/2 - par.text_font_size,
+        place_img(star_img, "star", par.w/2 - 21*par.w/80 + i*3*par.w/40,par.h/2 - par.text_font_size,
                   3*par.w/40, 3*par.h/10, 1);
       }
 
